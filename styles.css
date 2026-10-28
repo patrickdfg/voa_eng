@@ -275,3 +275,19 @@ h1,h2,h3,h4{letter-spacing:-.8px}
   .install-app-btn{font-size:11px;padding:8px 10px;border-radius:10px}
 }
 @media(display-mode:standalone){.install-app-btn{display:none!important}}
+
+/* 각 VOA 52강을 앱 안에서 바로 재생하는 동영상 학습 화면 */
+.video-section{scroll-margin-top:22px}
+.lesson-video-wrap{margin:4px 0 18px;background:#1d1c29;border-radius:18px;overflow:hidden;box-shadow:0 12px 30px #21183120}
+.lesson-video-player{display:block;width:100%;max-height:min(64vh,520px);aspect-ratio:16/9;object-fit:contain;background:#11111d}
+.lesson-video-tools{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:11px 15px;background:#272235;color:#e3dbf1;font-size:11px;font-weight:700}
+.lesson-video-tools label{display:inline-flex;align-items:center;gap:8px;font-weight:900;white-space:nowrap}
+.lesson-video-tools select{border:1px solid #8b78a9;border-radius:9px;background:#3b304f;color:#fff;padding:8px 10px;font-size:12px;font-weight:800;cursor:pointer;max-width:100%}
+.video-error{background:#fff2ee;color:#9a4a40;font-size:12px;font-weight:800;line-height:1.7;padding:12px 14px;margin:0}
+.video-error[hidden]{display:none}
+@media(max-width:590px){
+  .lesson-video-wrap{border-radius:13px}
+  .lesson-video-player{max-height:56vh}
+  .lesson-video-tools{padding:9px 10px;gap:7px;font-size:10px}
+  .lesson-video-tools select{padding:7px 8px;font-size:11px}
+}
