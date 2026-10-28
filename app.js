@@ -74,7 +74,7 @@
   }
   function renderStudy(){
     const l=lesson(state.selected),p=practiceFor(l.id),last=l.id===52,prev=l.id===1,pdfUrl=`${COURSE_PDF}#page=${p.page}`;
-    const media=LESSON_VIDEOS[l.id-1],videoUrl=videoQuality==="720p"?media.hd:media.sd;
+    const media=LESSON_VIDEOS[l.id-1],videoUrl=videoQuality==="1080p"?media.fhd:videoQuality==="720p"?media.hd:media.sd;
     return `<div class="study-header">${heading("TODAY'S ENGLISH","오늘의 영어 시간 ✏️","영상 → 공식 PDF → 듣고 말하기 → 빈칸·상황별 연습 → 퀴즈 → 완료 순서로 공부해요.")}
       <select class="lesson-picker" id="lessonPicker" aria-label="학습할 강의 선택">${LESSONS.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${String(x.id).padStart(2,"0")}강 · ${esc(x.title)}</option>`).join("")}</select></div>
       <div class="study-overview"><div class="study-cover" aria-label="${esc(l.topic)} 강의 이미지"><span class="cover-emoji">${lessonIcon(l.id)}</span><span class="cover-sticker">Let's go! ✦</span></div>
@@ -88,7 +88,7 @@
             이 브라우저는 영상 재생을 지원하지 않습니다.
           </video>
           <p class="video-error" id="videoPlaybackIssue" role="status" hidden>영상 연결이 원활하지 않아요. 아래 '원본 영상' 버튼으로 열어 보세요.</p>
-          <div class="lesson-video-tools"><label for="videoQuality">화질 <select id="videoQuality" aria-label="영상 화질"><option value="360p" ${videoQuality==="360p"?"selected":""}>기본 · 360p</option><option value="720p" ${videoQuality==="720p"?"selected":""}>고화질 · 720p</option></select></label><span>▶ 재생 버튼을 눌러 시작하세요 · 인터넷 연결 필요</span></div>
+          <div class="lesson-video-tools"><label for="videoQuality">화질 <select id="videoQuality" aria-label="영상 화질"><option value="360p" ${videoQuality==="360p"?"selected":""}>기본 · 360p</option><option value="720p" ${videoQuality==="720p"?"selected":""}>고화질 · 720p</option><option value="1080p" ${videoQuality==="1080p"?"selected":""}>Full HD · 1080p</option></select></label><span>▶ 재생 버튼을 눌러 시작하세요 · 인터넷 연결 필요</span></div>
         </div>
         <div class="study-action-row"><button class="btn ${state.watched[l.id]?"btn-green":"btn-soft"}" data-action="watched" id="watchedButton">${state.watched[l.id]?"✓ 영상 시청 기록됨":"영상 봤어요 ✓"}</button><a href="${l.url}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">원본 영상 ↗</a></div>
         <p class="muted-hint">출처: VOA Learning English · 영상은 공식 서버에서 직접 재생됩니다. 재생이 끝나면 시청 기록이 자동 저장됩니다.</p>
@@ -348,10 +348,10 @@ ${notes||"(아직 메모가 없습니다. 이 강의 제목과 주제를 바탕�
   document.addEventListener("change",e=>{
     if(e.target.id==="lessonPicker"){go("study",Number(e.target.value));return}
     if(e.target.id==="videoQuality"){
-      videoQuality=e.target.value==="720p"?"720p":"360p";
+      videoQuality=["360p","720p","1080p"].includes(e.target.value)?e.target.value:"360p";
       const player=$("lessonVideo"),media=LESSON_VIDEOS[state.selected-1];if(!player||!media)return;
       const previousTime=Number.isFinite(player.currentTime)?player.currentTime:0,wasPlaying=!player.paused;
-      player.src=videoQuality==="720p"?media.hd:media.sd;
+      player.src=videoQuality==="1080p"?media.fhd:videoQuality==="720p"?media.hd:media.sd;
       player.load();
       player.addEventListener("loadedmetadata",()=>{
         if(previousTime>0&&previousTime<player.duration)player.currentTime=previousTime;
