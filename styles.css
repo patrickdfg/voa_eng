@@ -262,3 +262,16 @@ h1,h2,h3,h4{letter-spacing:-.8px}
  .scenario-comparison{padding:14px}
  .scenario-comparison .study-action-row .btn{flex:1;min-width:0;font-size:11px}
 }
+
+/* 홈 화면 웹앱 설치 */
+.install-app-btn{display:inline-flex;align-items:center;gap:5px;flex:none;border:1px solid #dcd0f2;border-radius:12px;background:#efe8ff;color:#5e4897;padding:9px 12px;font-size:12px;font-weight:900;white-space:nowrap;transition:background .2s}
+.install-app-btn:hover{background:#e4d7ff}
+.install-app-btn[hidden]{display:none!important}
+.install-dialog{max-width:440px}
+.install-instruction{border-radius:14px;background:#f4efff;border:1px solid #e7dcf8;color:#5b4a80;padding:16px;margin:14px 0 20px;font-size:13px;font-weight:700;line-height:1.9}
+@media(max-width:590px){
+  .top-actions{gap:8px}
+  .top-actions .today-badge{display:none}
+  .install-app-btn{font-size:11px;padding:8px 10px;border-radius:10px}
+}
+@media(display-mode:standalone){.install-app-btn{display:none!important}}

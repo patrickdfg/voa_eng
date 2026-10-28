@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#fbf8f2">
+  <meta name="theme-color" content="#6753a4">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="하루영어">
@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Nunito:wght@500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261029">
+  <link rel="stylesheet" href="styles.css?v=20261029-pwa">
 </head>
 <body>
   <div class="app-shell">
@@ -41,7 +41,7 @@
     <main class="main" id="main">
       <header class="topbar">
         <div class="breadcrumb"><span class="top-appname">HARU ENGLISH</span><span class="separator">/</span><span id="sectionName">홈</span></div>
-        <div class="top-actions"><span class="today-badge" id="topDate"></span><button class="avatar-button" id="profileButton" aria-label="학습 데이터 관리">M</button></div>
+        <div class="top-actions"><span class="today-badge" id="topDate"></span><button class="install-app-btn" id="installAppButton" type="button" aria-label="하루영어 앱 설치 안내"><span aria-hidden="true">📲</span> 앱 설치</button><button class="avatar-button" id="profileButton" aria-label="학습 데이터 관리">M</button></div>
       </header>
       <div id="appContent"></div>
     </main>
@@ -61,8 +61,10 @@
     <label for="importData" class="btn btn-outline wide file-label">백업 파일 불러오기 ↑</label><input type="file" id="importData" accept="application/json" hidden>
     <p class="dialog-foot">VOA 공식 강의로 이동하며, 수업 영상과 자료의 저작권은 원 제작자에게 있습니다.</p>
   </dialog>
+  <dialog id="installDialog" class="data-dialog install-dialog"><div class="dialog-header"><div><small>INSTALL HARU ENGLISH</small><h2>📲 하루영어 앱 설치</h2></div></div><p>홈 화면에 꽃 아이콘을 추가하면 일반 앱처럼 바로 열 수 있어요. 무료이며 기존 학습 기록도 유지됩니다.</p><div id="installInstruction" class="install-instruction">Chrome 메뉴(⋮)에서 ‘앱 설치’ 또는 ‘홈 화면에 추가’를 선택해 주세요.</div><button id="installClose" class="btn btn-primary wide" type="button">확인</button></dialog>
   <script src="data.js?v=20261029"></script>
   <script src="practice-data.js?v=20261029"></script>
   <script src="app.js?v=20261029"></script>
+  <script src="pwa.js?v=20261029-pwa"></script>
 </body>
 </html>

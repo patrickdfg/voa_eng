@@ -21,5 +21,10 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "id": "/voa_eng/",
+  "categories": [
+    "education"
+  ],
+  "prefer_related_applications": false
 }
