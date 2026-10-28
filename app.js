@@ -187,6 +187,11 @@
     const media=LESSON_VIDEOS[l.id-1],videoUrl=videoQuality==="1080p"?media.fhd:videoQuality==="720p"?media.hd:media.sd;
     return `<div class="study-header">${heading("TODAY'S ENGLISH","오늘의 영어 시간 ✏️","영상 → 한국어 교재 학습 → 듣고 말하기 → 빈칸·상황별 연습 → 퀴즈 → 완료 순서로 공부해요.")}
       <select class="lesson-picker" id="lessonPicker" aria-label="학습할 강의 선택">${LESSONS.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${String(x.id).padStart(2,"0")}강 · ${esc(x.title)}</option>`).join("")}</select></div>
+      <nav class="day-swipe-nav" aria-label="일차별 강의 이동">
+        <button type="button" class="day-swipe-arrow" data-action="prev" aria-label="이전 일차" ${prev?"disabled":""}>←</button>
+        <div class="day-swipe-current"><strong>${l.id}일차 <span class="day-swipe-total">/ 52일차</span></strong><span>← 오른쪽으로 밀면 이전 · 왼쪽으로 밀면 다음 →</span></div>
+        <button type="button" class="day-swipe-arrow" data-action="next" aria-label="다음 일차" ${last?"disabled":""}>→</button>
+      </nav>
       <div class="study-overview"><div class="study-cover" aria-label="${esc(l.topic)} 강의 이미지"><span class="cover-emoji">${lessonIcon(l.id)}</span><span class="cover-sticker">Let's go! ✦</span></div>
         <div class="panel study-details"><span class="tiny-label">VOA LEVEL 1 · LESSON ${String(l.id).padStart(2,"0")}</span><h2>${esc(l.title)}</h2><p>${esc(l.translation)}<br><span style="font-size:11px;color:#b0a6b4">${esc(l.topic)}</span></p>
         <div class="study-buttons"><a class="btn btn-primary" href="#videoSection">▶ 앱에서 영상 보기</a><a class="btn btn-soft" href="#bookSection">📙 교재로 공부하기</a></div></div></div>
@@ -458,6 +463,28 @@ ${notes||"(아직 메모가 없습니다. 이 강의 제목과 주제를 바탕�
       case"open-data":$("dataDialog").showModal();break;
     }
   });
+  // 일차 학습 화면에서 한 손가락 좌우 스와이프로 이전/다음 강의 이동
+  // 버튼·입력창·동영상·가로 스크롤 영역은 자체 터치 동작을 우선합니다.
+  let daySwipeStart=null;
+  const swipeIgnoreSelector="button, a, input, textarea, select, video, audio, iframe, [contenteditable], [role=slider], .study-jump, .book-tabs, .lesson-video-wrap";
+  document.addEventListener("touchstart",e=>{
+    daySwipeStart=null;
+    if(view!=="study"||e.touches.length!==1)return;
+    if(!e.target.closest("#appContent")||e.target.closest(swipeIgnoreSelector))return;
+    const point=e.touches[0],width=window.innerWidth||document.documentElement.clientWidth;
+    if(point.clientX<24||point.clientX>width-24)return;
+    daySwipeStart={x:point.clientX,y:point.clientY,id:state.selected};
+  },{passive:true});
+  document.addEventListener("touchmove",e=>{if(e.touches.length!==1)daySwipeStart=null},{passive:true});
+  document.addEventListener("touchend",e=>{
+    const start=daySwipeStart;daySwipeStart=null;
+    if(!start||view!=="study"||state.selected!==start.id||e.changedTouches.length!==1)return;
+    const point=e.changedTouches[0],dx=point.clientX-start.x,dy=point.clientY-start.y;
+    if(Math.abs(dx)<75||Math.abs(dx)<Math.abs(dy)*1.5)return;
+    const next=start.id+(dx<0?1:-1);
+    if(next>=1&&next<=52)go("study",next);
+  },{passive:true});
+  document.addEventListener("touchcancel",()=>{daySwipeStart=null},{passive:true});
   document.addEventListener("input",e=>{
     if(e.target.id==="lessonSearch"){query=e.target.value;renderLessonGrid()}
     if(e.target.id==="lessonNotes"){state.notes[state.selected]=e.target.value;save()}

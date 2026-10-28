@@ -390,3 +390,19 @@ h1,h2,h3,h4{letter-spacing:-.8px}
   .video-script-listen{min-width:39px;min-height:40px;padding:7px;border-radius:9px;font-size:17px}
   .video-script-listen span{display:none}
 }
+
+/* 일차별 좌우 스와이프 안내·이동 버튼 */
+.day-swipe-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding:12px 14px;border:1px solid #e8ddf3;border-radius:18px;background:linear-gradient(110deg,#faf5ff,#fffaf4);box-shadow:0 3px 12px #76618d0d;user-select:none}
+.day-swipe-arrow{flex:none;display:grid;place-items:center;width:45px;height:45px;border-radius:13px;border:1px solid #dfd0ee;color:#654a94;background:#fff;font-size:23px;font-weight:900;cursor:pointer;transition:background .2s,transform .2s}
+.day-swipe-arrow:hover:not(:disabled){background:#eee4fc;transform:translateY(-1px)}
+.day-swipe-arrow:disabled{opacity:.35;cursor:default}
+.day-swipe-current{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;min-width:0}
+.day-swipe-current strong{color:#493472;font-size:19px;line-height:1.4}
+.day-swipe-total{font-size:12px;color:#9a88af;font-weight:700}
+.day-swipe-current>span{font-size:11px;line-height:1.5;color:#8a759d}
+@media(max-width:590px){
+  .day-swipe-nav{margin-top:12px;padding:10px;gap:8px;border-radius:15px}
+  .day-swipe-arrow{width:39px;height:42px;font-size:21px}
+  .day-swipe-current strong{font-size:17px}
+  .day-swipe-current>span{font-size:10px}
+}
