@@ -6,9 +6,9 @@
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const dateKey=(d=new Date())=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
   const formatDate=d=>new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",month:"long",day:"numeric",weekday:"short"}).format(d);
-  const defaults=()=>({selected:1,completed:{},watched:{},notes:{},quizResults:{},wrong:{},activity:{},practice:{},practiceAnswers:{}});
+  const defaults=()=>({selected:1,completed:{},watched:{},notes:{},quizResults:{},wrong:{},activity:{},practice:{},practiceAnswers:{},bookProgress:{},writings:{}});
   function load(){try{const raw=JSON.parse(localStorage.getItem(KEY));return raw&&typeof raw==="object"?{...defaults(),...raw}:defaults()}catch{return defaults()}}
-  let state=load(),view="home",filter="all",query="",quiz=null,calendarOffset=0,toastTimer,videoQuality="360p";
+  let state=load(),view="home",filter="all",query="",quiz=null,calendarOffset=0,toastTimer,videoQuality="360p",bookStage=1;
   const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch{toast("저장 공간을 확인해 주세요.")}};
   const completedCount=()=>Object.values(state.completed).filter(Boolean).length;
   const wrongCount=()=>Object.keys(state.wrong).length;
@@ -19,7 +19,7 @@
   const recordActivity=()=>{const k=dateKey();state.activity[k]=(state.activity[k]||0)+1;save()};
   function streak(){const dates=new Set(activityDates());let d=new Date(),num=0;if(!dates.has(dateKey(d)))d.setDate(d.getDate()-1);while(dates.has(dateKey(d))){num++;d.setDate(d.getDate()-1)}return num}
   function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2700)}
-  function go(to,id){if(id)state.selected=Number(id);if(to==="study")quiz=null;view=to;save();render();window.scrollTo({top:0,behavior:"smooth"})}
+  function go(to,id){if(id)state.selected=Number(id);if(to==="study"){quiz=null;bookStage=1;}view=to;save();render();window.scrollTo({top:0,behavior:"smooth"})}
   const action=(a,label,extra="")=>`<button class="btn btn-primary" data-action="${a}" ${extra}>${label}</button>`;
   const heading=(eyebrow,title,desc)=>`<div class="page-heading"><span class="eyebrow">${eyebrow}</span><h1 class="page-title">${title}</h1><p class="page-desc">${desc}</p></div>`;
   const lessonIcon=id=>["👋","💬","📍","🔎","🏡","🧭","🗣️","☕","☁️","🏠","🏘️","👨‍👩‍👧","🎉","🛍️","👀","🌏","📅","🌞","🧑‍💻","🌟","🥳","🏖️","🎁","🎡","🚲","🎮","🚪","🏆","⏳","🚢","⚾","🌳","🏏","💭","🍳","🧰","🤝","💜","✨","🌲","🙌","🚶","💡","🥗","🗺️","📚","🤲","✈️","🕵️","🎒","🌻","🚀"][(id-1)%52];
@@ -72,15 +72,97 @@
       <button class="lesson-card" data-action="open-lesson" data-id="${l.id}"><div class="lesson-card-top"><span class="number-pill">LESSON ${String(l.id).padStart(2,"0")}</span>${state.completed[l.id]?'<span class="completed-pill">✓ 완료</span>':""}</div>
       <div class="lesson-card-icon">${lessonIcon(l.id)}</div><h3>${esc(l.title)}</h3><p>${esc(l.translation)}</p><div class="lesson-card-bottom"><span>${esc(l.topic)}</span><b>학습하기 ↗</b></div></button>`).join(""):`<div class="empty-state" style="grid-column:1/-1"><div class="empty-emoji">🔍</div><h3>일치하는 강의가 없어요.</h3><p>다른 단어로 검색하거나 필터를 바꿔 보세요.</p></div>`;
   }
+
+  /* 공식 601쪽 교재를 한글 학습 단계로 재구성합니다. 모든 원문 텍스트는 앱에 포함돼 있습니다. */
+  const bookStages=[
+    {icon:"🎬",label:"대화·듣기"},
+    {icon:"📚",label:"단어 학습"},
+    {icon:"💡",label:"문법·발음"},
+    {icon:"✍️",label:"실전 연습"},
+    {icon:"📄",label:"전체 원문"}
+  ];
+  function bookLine(r){
+    return `<div class="book-line"><div class="book-line-head"><span class="book-speaker">${esc(r.speaker||"대화")}</span><button class="book-audio" data-action="book-speak" data-text="${esc(r.en)}" type="button" aria-label="영어 문장 듣기">🔊 듣기</button></div>
+      <p class="book-english">${esc(r.en)}</p><p class="book-korean">${esc(r.ko||"한국어 번역을 준비 중이에요.")}</p></div>`;
+  }
+  function renderBookStage(l){
+    const b=STUDY_BOOK[l.id-1],g=b.guide,done=state.bookProgress[l.id]||{};
+    const example=`<div class="book-example"><small>🌷 오늘의 핵심 예문 · 학습용 응용 문장</small><strong>${esc(g.example)}</strong><p>${esc(g.exampleKo)}</p><button data-action="book-speak" data-text="${esc(g.example)}" class="btn btn-soft btn-sm" type="button">🔊 예문 듣기</button></div>`;
+    let body="";
+    if(bookStage===1){
+      const first=b.conversation.slice(0,6).map(bookLine).join("");
+      const rest=b.conversation.slice(6).map(bookLine).join("");
+      body=`<div class="book-stage-title"><h4>1일차 · 보고, 듣고, 대화를 이해해요</h4><p>① 위의 VOA 영상을 한 번 보세요. ② 아래 대화를 영어로 읽고 ③ 소리를 들으며 따라 말해 보세요.</p></div>
+        <p class="book-focus">🎯 ${esc(g.focus)}</p>${example}
+        <div class="book-subheading">VOA 실제 대화문 <span>${b.conversation.length}개 말차례</span></div>
+        <p class="book-translation-note">영어는 공식 교재 원문입니다. 아래 전체 한국어 해석은 자동 번역 참고본이라 어색하거나 틀린 부분이 있을 수 있어요. 정확한 표현은 위의 한국어 핵심 예문을 먼저 익혀 주세요.</p>
+        <div class="book-dialogue">${first}</div>
+        ${rest?`<details class="book-expand"><summary>이어서 전체 대화문 보기 · ${b.conversation.length-6}개 더 펼치기</summary><div class="book-dialogue">${rest}</div></details>`:""}`;
+    }else if(bookStage===2){
+      body=`<div class="book-stage-title"><h4>2일차 · 핵심 단어를 배우고 소리 내요</h4><p>① 영어와 한국어 뜻을 살펴보세요. ② 🔊 버튼을 듣고 따라 말하세요. ③ 마지막에는 한국어 뜻을 가리고 스스로 기억해 보세요.</p></div>
+        <div class="book-subheading">공식 교재 핵심 단어 <span>${b.words.length}개 · 한국어 뜻 수록</span></div>
+        <div class="book-words">${b.words.map(w=>`<div class="book-word"><div class="book-word-top"><strong>${esc(w.en)}</strong><button class="book-audio" data-action="book-speak" data-text="${esc(w.en)}" type="button" aria-label="${esc(w.en)} 발음 듣기">🔊</button></div><p class="book-word-ko">${esc(w.ko)}</p><details><summary>VOA 영어 풀이 보기</summary><p>${esc(w.definition)}</p></details></div>`).join("")}</div>`;
+    }else if(bookStage===3){
+      body=`<div class="book-stage-title"><h4>3일차 · 문법을 이해하고 입으로 연습해요</h4><p>어려운 용어부터 외우지 마세요. 먼저 예문을 듣고 따라 하면서 문장 모양을 익혀 보세요.</p></div>
+        <div class="book-grammar"><span>🇰🇷 초보자를 위한 문법 설명</span><p>${esc(g.grammar)}</p></div>${example}
+        <div class="book-pronunciation"><h5>🎙 따라 말하기 미션</h5><p>예문을 두 번 들어 보세요. 천천히 읽고, 자연스럽게 한 번 더 말해 보세요. 마이크가 되는 기기에서는 말하기를 확인할 수 있어요.</p>
+          <div class="study-action-row"><button class="btn btn-primary" data-action="book-mic" type="button">🎙 내 발음 확인하기</button><button class="btn btn-soft" data-action="book-speak" data-text="${esc(g.example)}" type="button">🔊 다시 듣기</button></div><div id="bookSpeechResult" role="status" aria-live="polite"></div></div>
+        <details class="book-expand"><summary>VOA 교재의 영어 학습 목표 원문 보기</summary><p>${esc(b.goals||"교재의 원문 전체에서 확인할 수 있어요.")}</p></details>`;
+    }else if(bookStage===4){
+      body=`<div class="book-stage-title"><h4>4일차 · 내가 직접 말하고 써 봐요</h4><p>교재의 활동·평가·쓰기를 앱에서 연습하도록 재구성했어요. 완벽하지 않아도 먼저 영어로 표현해 보세요.</p></div>
+        <div class="book-mission"><span>🎯 오늘의 실전 미션</span><p>${esc(g.mission)}</p></div>
+        <div class="study-action-row book-practice-links"><a href="#clozeSection" class="btn btn-primary">✏️ 대화 빈칸 풀기 ↓</a><a href="#scenarioSection" class="btn btn-outline">🎙 상황에 답하기 ↓</a><a href="#quizMount" class="btn btn-soft">🧩 퀴즈 풀기 ↓</a></div>
+        <label class="practice-label" for="bookWriting">📝 영어로 직접 써 보기 · 자동 저장</label>
+        <textarea id="bookWriting" class="note-box book-writing" placeholder="예문을 참고해 나만의 영어 문장을 2~3개 적어 보세요.">${esc(state.writings[l.id]||"")}</textarea>
+        <details class="book-expand"><summary>VOA 공식 듣기 평가의 문제 원문 보기</summary><pre class="book-source-text">${esc(b.quiz)}</pre><p class="muted-hint">원문 평가는 듣기 음원이 필요한 문제가 포함될 수 있습니다. 아래 앱 내 퀴즈는 별도의 연습 문제입니다.</p></details>`;
+    }else{
+      const pages=STUDY_PAGES[l.id-1].pages;
+      body=`<div class="book-stage-title"><h4>교재 원문 전체 보기 · ${l.id}강</h4><p>공식 교재의 원문 텍스트를 페이지별로 넣었습니다. 교사용 지침과 활동 내용도 포함되어 있으며, 처음 공부할 때는 위의 한국어 학습 단계부터 시작해 보세요.</p></div>
+        <p class="book-translation-note">그림 중심 활동지·표·배경 디자인은 텍스트 추출에 포함되지 않을 수 있습니다. 해당 그림은 출처에 표시된 원본 교재를 참고해 주세요.</p>
+        <div class="book-page-list">${pages.map((p,i)=>`<details class="book-source-page" ${i===0?"open":""}><summary>📄 PDF ${p.page}쪽 · 원문 펼치기</summary><pre class="book-source-text">${esc(p.text)}</pre></details>`).join("")}</div>
+        <p class="practice-credit">자료 출처: VOA Learning English · <a href="${COURSE_PDF}#page=${b.startPage}" target="_blank" rel="noopener noreferrer">이미지 활동지 포함 원본 PDF(선택) ↗</a></p>`;
+    }
+    return `<div class="book-stage-content">${body}${bookStage<=4?`<div class="book-progress-actions"><button class="btn ${done[bookStage]?"btn-green":"btn-primary"}" data-action="book-done" type="button">${done[bookStage]?"✓ 이 단계 학습 완료":"✓ 이 단계 공부했어요"}</button>${bookStage<4?`<button class="btn btn-outline" data-action="book-next" type="button">다음 단계 →</button>`:""}</div>`:""}</div>`;
+  }
+  function renderBookPanel(l){
+    const b=STUDY_BOOK[l.id-1],done=state.bookProgress[l.id]||{};
+    return `<section class="panel study-section book-panel" id="bookSection"><div class="study-section-title"><span class="step-icon">📙</span><div><h3>02. 한국어로 공식 교재 공부하기</h3><p>VOA 52강 교재 ${b.startPage}~${b.endPage}쪽 내용 · 한국어 목표·해설·단어·실전 연습</p></div></div>
+      <div class="book-step-status"><span>🌱 ${Object.values(done).filter(Boolean).length}/4단계 공부함</span><strong>${esc(b.guide.focus)}</strong></div>
+      <nav class="book-tabs" aria-label="교재 학습 단계" role="tablist">${bookStages.map((step,i)=>`<button type="button" role="tab" class="book-tab ${bookStage===i+1?"selected":""}" aria-selected="${bookStage===i+1}" data-book-stage="${i+1}" data-action="book-stage" data-stage="${i+1}"><span>${step.icon}${done[i+1]?" ✓":""}</span><small>${step.label}</small></button>`).join("")}</nav>
+      <div id="bookMount">${renderBookStage(l)}</div>
+    </section>`;
+  }
+  function refreshBookStage(){
+    const l=lesson(state.selected),mount=$("bookMount");if(mount)mount.innerHTML=renderBookStage(l);
+    document.querySelectorAll("[data-book-stage]").forEach(button=>{
+      const active=Number(button.dataset.bookStage)===bookStage;
+      button.classList.toggle("selected",active);button.setAttribute("aria-selected",String(active));
+      const done=state.bookProgress[l.id]||{};const step=bookStages[Number(button.dataset.bookStage)-1];
+      const span=button.querySelector("span");if(span)span.textContent=step.icon+(done[Number(button.dataset.bookStage)]?" ✓":"");
+    });
+    const status=document.querySelector(".book-step-status span");
+    if(status)status.textContent="🌱 "+Object.values(state.bookProgress[l.id]||{}).filter(Boolean).length+"/4단계 공부함";
+  }
+  function listenBook(){
+    const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!Recognition){toast("말하기 인식은 지원되는 Chrome 브라우저에서 이용해 주세요.");return}
+    const expected=STUDY_BOOK[state.selected-1].guide.example,r=new Recognition();r.lang="en-US";r.interimResults=false;r.maxAlternatives=1;
+    const area=$("bookSpeechResult");if(!area)return;
+    area.innerHTML='<div class="speak-result">🎙 영어로 말해 보세요…</div>';
+    r.onresult=e=>{const said=e.results[0][0].transcript;area.innerHTML=`<div class="speak-result">👏 말하기 연습 완료!<p>내 발음: <strong>${esc(said)}</strong></p><p>연습 문장: <strong>${esc(expected)}</strong></p><small>인식 결과를 보며 단어와 억양을 다시 연습해 보세요.</small></div>`};
+    r.onerror=()=>area.innerHTML='<div class="speak-result">마이크 권한과 브라우저 지원 여부를 확인해 주세요.</div>';
+    try{r.start()}catch{toast("마이크를 다시 확인해 주세요.")}
+  }
+
   function renderStudy(){
     const l=lesson(state.selected),p=practiceFor(l.id),last=l.id===52,prev=l.id===1,pdfUrl=`${COURSE_PDF}#page=${p.page}`;
     const media=LESSON_VIDEOS[l.id-1],videoUrl=videoQuality==="1080p"?media.fhd:videoQuality==="720p"?media.hd:media.sd;
-    return `<div class="study-header">${heading("TODAY'S ENGLISH","오늘의 영어 시간 ✏️","영상 → 공식 PDF → 듣고 말하기 → 빈칸·상황별 연습 → 퀴즈 → 완료 순서로 공부해요.")}
+    return `<div class="study-header">${heading("TODAY'S ENGLISH","오늘의 영어 시간 ✏️","영상 → 한국어 교재 학습 → 듣고 말하기 → 빈칸·상황별 연습 → 퀴즈 → 완료 순서로 공부해요.")}
       <select class="lesson-picker" id="lessonPicker" aria-label="학습할 강의 선택">${LESSONS.map(x=>`<option value="${x.id}" ${x.id===l.id?"selected":""}>${String(x.id).padStart(2,"0")}강 · ${esc(x.title)}</option>`).join("")}</select></div>
       <div class="study-overview"><div class="study-cover" aria-label="${esc(l.topic)} 강의 이미지"><span class="cover-emoji">${lessonIcon(l.id)}</span><span class="cover-sticker">Let's go! ✦</span></div>
         <div class="panel study-details"><span class="tiny-label">VOA LEVEL 1 · LESSON ${String(l.id).padStart(2,"0")}</span><h2>${esc(l.title)}</h2><p>${esc(l.translation)}<br><span style="font-size:11px;color:#b0a6b4">${esc(l.topic)}</span></p>
-        <div class="study-buttons"><a class="btn btn-primary" href="#videoSection">▶ 앱에서 영상 보기</a><a class="btn btn-soft" href="${pdfUrl}" target="_blank" rel="noopener noreferrer">📕 ${l.id}강 PDF</a></div></div></div>
-      <div class="study-jump" aria-label="강의 내부 바로가기"><a href="#videoSection">🎬 영상</a><a href="#pdfSection">📖 PDF</a><a href="#clozeSection">✏️ 빈칸</a><a href="#scenarioSection">🎙 대답</a><a href="#quizMount">🧩 퀴즈</a></div>
+        <div class="study-buttons"><a class="btn btn-primary" href="#videoSection">▶ 앱에서 영상 보기</a><a class="btn btn-soft" href="#bookSection">📙 교재로 공부하기</a></div></div></div>
+      <div class="study-jump" aria-label="강의 내부 바로가기"><a href="#videoSection">🎬 영상</a><a href="#bookSection">📙 교재 학습</a><a href="#clozeSection">✏️ 빈칸</a><a href="#scenarioSection">🎙 대답</a><a href="#quizMount">🧩 퀴즈</a></div>
       <section class="panel study-section video-section" id="videoSection"><div class="study-section-title"><span class="step-icon">🎬</span><div><h3>01. 앱에서 공식 영상 보기</h3><p>다른 사이트로 이동할 필요 없이 여기서 바로 재생해 보세요.</p></div></div>
         <div class="lesson-video-wrap">
           <video class="lesson-video-player" id="lessonVideo" data-lesson-id="${l.id}" controls playsinline webkit-playsinline preload="none" poster="${esc(media.poster)}" aria-label="VOA ${l.id}강 영상 - ${esc(l.title)}">
@@ -93,11 +175,7 @@
         <div class="study-action-row"><button class="btn ${state.watched[l.id]?"btn-green":"btn-soft"}" data-action="watched" id="watchedButton">${state.watched[l.id]?"✓ 영상 시청 기록됨":"영상 봤어요 ✓"}</button><a href="${l.url}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">원본 영상 ↗</a></div>
         <p class="muted-hint">출처: VOA Learning English · 영상은 공식 서버에서 직접 재생됩니다. 재생이 끝나면 시청 기록이 자동 저장됩니다.</p>
       </section>
-      <section class="panel study-section" id="pdfSection"><div class="study-section-title"><span class="step-icon">📕</span><div><h3>02. 공식 PDF 교재 보기</h3><p>VOA 공식 52강 통합 교재 601쪽 중 ${l.id}강 시작 위치: PDF ${p.page}쪽</p></div></div>
-        <div class="pdf-callout"><div class="pdf-cover-mark">PDF<span>52</span></div><div><strong>Let's Learn English · Lesson ${l.id}</strong><p>실제 대화문·활동지·교사용 지도안이 포함된 VOA 자료입니다. 별도 요금이 없어요.</p></div></div>
-        <div class="study-action-row"><a class="btn btn-primary" href="${pdfUrl}" target="_blank" rel="noopener noreferrer">이 강의 PDF 열기 ↗</a><button class="btn btn-outline" data-action="pdf-preview">앱에서 미리보기</button><a class="btn btn-soft" href="${COURSE_PDF}" target="_blank" rel="noopener noreferrer">52강 전체 PDF ↗</a></div>
-        <div id="pdfMount" class="pdf-mount" hidden></div><p class="muted-hint">모바일 PDF 뷰어에 따라 지정 쪽으로 이동하지 않을 수 있습니다. 그때는 표시된 ${p.page}쪽으로 이동해 주세요. 출처: VOA Learning English.</p>
-      </section>
+      ${renderBookPanel(l)}
       <section class="panel study-section"><div class="study-section-title"><span class="step-icon">💬</span><div><h3>03. 핵심 문장 따라 말하기</h3><p>강의 제목의 영어 표현을 듣고 직접 말해 보세요.</p></div></div>
         <div class="phrase-card"><div><strong>${esc(l.title)}</strong><p>${esc(l.translation)}</p></div><div class="phrase-actions"><button class="icon-btn" data-action="speak" title="영어 듣기" aria-label="영어 듣기">🔊</button><button class="icon-btn" data-action="speech" title="내 발음 확인" aria-label="말하기 연습">🎙</button></div></div><div id="speakResult" aria-live="polite"></div>
       </section>
@@ -126,7 +204,7 @@
       <div class="practice-input-row"><input id="clozeInput" class="practice-input" type="text" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="영어 단어를 입력하세요" aria-describedby="clozeFeedback"><button class="btn btn-primary" data-action="cloze-check">채점하기</button></div>
       <div class="study-action-row"><button class="btn btn-soft btn-sm" data-action="cloze-hint">💡 첫 글자 힌트</button><span class="muted-hint">대소문자와 문장부호는 구분하지 않아요.</span></div>
       <div id="clozeFeedback" role="status" aria-live="polite">${done?'<div class="feedback">✓ 이전에 정답을 맞혔어요! 다시 풀어도 좋아요.</div>':""}</div>
-      <p class="practice-credit">교재 원문 일부 · <a href="${COURSE_PDF}#page=${p.page}" target="_blank" rel="noopener noreferrer">VOA ${l.id}강 PDF ↗</a></p>
+      <p class="practice-credit">VOA 공식 교재 ${l.id}강의 실제 대화문 · 위의 ‘교재 학습’에서 한국어 설명을 보세요.</p>
     </section>`;
   }
   function renderScenarioSection(l){
@@ -249,6 +327,11 @@ ${notes||"(아직 메모가 없습니다. 이 강의 제목과 주제를 바탕�
     const btn=e.target.closest("[data-action]");if(!btn)return;
     const id=Number(btn.dataset.id),a=btn.dataset.action,l=lesson(state.selected);
     switch(a){
+      case"book-speak":speak(btn.dataset.text||"");break;
+      case"book-mic":listenBook();break;
+      case"book-stage":{const desired=Number(btn.dataset.stage);if(desired>=1&&desired<=5){bookStage=desired;refreshBookStage()}break}
+      case"book-next":bookStage=Math.min(5,bookStage+1);refreshBookStage();break;
+      case"book-done":{if(bookStage<=4){state.bookProgress[l.id]={...(state.bookProgress[l.id]||{}),[bookStage]:true};recordActivity();refreshBookStage();toast("학습 단계가 기록됐어요! 🌱")}break}
       case"continue":state.selected=nextId();go("study",state.selected);break;
       case"open-lesson":go("study",id);break;
       case"video":go("study",nextId());setTimeout(()=>$("videoSection")?.scrollIntoView({behavior:"smooth",block:"start"}),120);break;
@@ -343,6 +426,7 @@ ${notes||"(아직 메모가 없습니다. 이 강의 제목과 주제를 바탕�
   document.addEventListener("input",e=>{
     if(e.target.id==="lessonSearch"){query=e.target.value;renderLessonGrid()}
     if(e.target.id==="lessonNotes"){state.notes[state.selected]=e.target.value;save()}
+    if(e.target.id==="bookWriting"){state.writings[state.selected]=e.target.value;save()}
      if(e.target.id==="scenarioAnswer"){state.practiceAnswers[state.selected]=e.target.value;save()}
   });
   document.addEventListener("change",e=>{
@@ -387,7 +471,7 @@ ${notes||"(아직 메모가 없습니다. 이 강의 제목과 주제를 바탕�
     try{const parsed=JSON.parse(await file.text());if(parsed.app!=="haru-english"||parsed.version!==1||!parsed.data||typeof parsed.data!=="object")throw Error("invalid");
       if(!confirm("현재 학습 기록을 백업 파일로 교체할까요?"))return;
       const d=parsed.data;state={...defaults(),...d,selected:Math.max(1,Math.min(52,Number(d.selected)||1))};
-      for(const k of ["completed","watched","notes","quizResults","wrong","activity","practice","practiceAnswers"])if(!state[k]||typeof state[k]!=="object"||Array.isArray(state[k]))state[k]={};
+      for(const k of ["completed","watched","notes","quizResults","wrong","activity","practice","practiceAnswers","bookProgress","writings"])if(!state[k]||typeof state[k]!=="object"||Array.isArray(state[k]))state[k]={};
       save();$("dataDialog").close();render();toast("학습 기록을 가져왔어요.")
     }catch{toast("올바른 하루영어 백업 파일이 아니에요.")}finally{e.target.value=""}
   });

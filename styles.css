@@ -291,3 +291,70 @@ h1,h2,h3,h4{letter-spacing:-.8px}
   .lesson-video-tools{padding:9px 10px;gap:7px;font-size:10px}
   .lesson-video-tools select{padding:7px 8px;font-size:11px}
 }
+
+/* 52강 공식 교재를 한국어 4일 학습 과정으로 보여주는 화면 */
+.book-panel{border:1px solid #e6d8f8;scroll-margin-top:20px}
+.book-step-status{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:linear-gradient(100deg,#f2eaff,#fff8eb);padding:14px 17px;border-radius:15px;margin:6px 0 16px}
+.book-step-status span{color:#6a51ac;font-size:12px;font-weight:900;white-space:nowrap}
+.book-step-status strong{color:#47365f;font-size:13px;font-weight:800;line-height:1.7}
+.book-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:20px}
+.book-tab{display:flex;align-items:center;justify-content:center;gap:6px;flex-direction:column;padding:11px 6px;border:1px solid #e6dfed;border-radius:13px;background:#faf8fc;color:#7e708b;cursor:pointer;min-height:64px;transition:background .2s,color .2s,border-color .2s}
+.book-tab.selected{background:#6a52a5;border-color:#6a52a5;color:#fff;box-shadow:0 6px 15px #6a52a52e}
+.book-tab span{font-size:19px;line-height:1.1}
+.book-tab small{font-size:11px;font-weight:900;white-space:nowrap}
+.book-stage-content{animation:bookIn .18s ease-out}
+@keyframes bookIn{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.book-stage-title{padding-bottom:12px;border-bottom:1px solid #f0e9f5;margin-bottom:17px}
+.book-stage-title h4{font-size:18px;line-height:1.45;color:#403259;margin:0 0 6px;font-weight:900}
+.book-stage-title p{color:#81738e;font-size:13px;line-height:1.8;margin:0}
+.book-focus,.book-grammar,.book-mission{padding:17px 18px;border-radius:15px;background:#f0eafe;color:#5d4793;font-weight:900;font-size:15px;line-height:1.75;margin:12px 0 17px}
+.book-grammar{background:#f1fbf5;color:#366753}
+.book-grammar span,.book-mission span{display:block;margin-bottom:7px;font-size:12px;letter-spacing:.2px}
+.book-grammar p,.book-mission p{font-size:15px;margin:0}
+.book-mission{background:#fff8ec;color:#75552c}
+.book-example{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:19px;border-radius:18px;background:#faf5ff;border:1px solid #eee3fa;margin:13px 0 21px}
+.book-example small{font-size:12px;font-weight:900;color:#8d7ba3}
+.book-example strong{font-family:Nunito,"DM Sans",sans-serif;font-size:23px;line-height:1.4;color:#4e3780;overflow-wrap:anywhere}
+.book-example p{margin:0;font-size:15px;font-weight:800;color:#5e546a}
+.book-example .btn{margin-top:5px}
+.book-subheading{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#4c3b66;font-size:15px;font-weight:900;margin:16px 0 12px}
+.book-subheading span{font-size:11px;color:#9589a4;font-weight:800;text-align:right}
+.book-translation-note{font-size:11px;line-height:1.8;padding:11px 13px;border-radius:11px;background:#fff7e7;color:#82683f;margin:8px 0 14px}
+.book-dialogue{display:grid;gap:9px}
+.book-line{border:1px solid #eae3ef;background:#fff;border-radius:13px;padding:13px 15px;overflow-wrap:anywhere}
+.book-line-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.book-speaker{font-size:11px;font-weight:900;color:#7655b0;padding:4px 9px;background:#f2eafa;border-radius:30px}
+.book-audio{font-size:11px;font-weight:900;color:#69539e;background:#f3effb;border:1px solid #e8ddfa;border-radius:9px;padding:6px 10px;flex:none;cursor:pointer}
+.book-english{font-size:15px;font-weight:800;line-height:1.7;color:#43364f;margin:9px 0 5px;white-space:pre-wrap}
+.book-korean{font-size:13px;line-height:1.8;color:#675e70;margin:0}
+.book-expand{margin:14px 0;border:1px solid #eee4f5;border-radius:13px;background:#fcfaff;overflow:hidden}
+.book-expand>summary,.book-source-page>summary{padding:13px 16px;cursor:pointer;color:#634e88;font-size:13px;font-weight:900;list-style-position:inside}
+.book-expand>div,.book-expand>p,.book-expand>pre{margin:0 15px 15px}
+.book-expand .book-dialogue{padding:4px 13px 16px}
+.book-words{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.book-word{background:#fff;border:1px solid #ebe2f4;border-radius:14px;padding:15px;min-width:0}
+.book-word-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.book-word-top strong{font:900 17px/1.4 Nunito,"Noto Sans KR",sans-serif;color:#493776;overflow-wrap:anywhere}
+.book-word-ko{font-size:13px;color:#575068;font-weight:800;line-height:1.65;margin:6px 0 8px}
+.book-word details summary{font-size:11px;font-weight:800;color:#9a8aa9;cursor:pointer}
+.book-word details p{font-size:12px;color:#6a6079;line-height:1.7;margin:8px 0 0}
+.book-pronunciation{border:1px solid #e4dded;border-radius:15px;background:#fffefa;padding:17px;margin:17px 0}
+.book-pronunciation h5{font-size:15px;font-weight:900;color:#4e3970;margin:0 0 7px}
+.book-pronunciation p{font-size:13px;line-height:1.75;color:#6d617c;margin:0 0 13px}
+.book-practice-links{flex-wrap:wrap;margin:18px 0}
+.book-writing{min-height:130px}
+.book-progress-actions{border-top:1px solid #eee8f5;margin-top:22px;padding-top:17px;display:flex;gap:9px;flex-wrap:wrap}
+.book-page-list{display:grid;gap:8px}
+.book-source-page{background:#fff;border:1px solid #e9e1f2;border-radius:12px;overflow:hidden}
+.book-source-page[open]{background:#fcfaff}
+.book-source-text{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:#f7f4fc;border-radius:10px;padding:13px;font:12px/1.65 "DM Sans","Noto Sans KR",sans-serif;color:#51475f;margin:5px 14px 14px;max-height:500px;overflow-y:auto}
+@media(max-width:750px){
+ .book-tabs{display:flex;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:6px}
+ .book-tab{min-width:91px;flex:none}
+ .book-words{grid-template-columns:1fr}
+ .book-stage-title h4{font-size:16px}
+ .book-example strong{font-size:21px}
+ .book-english{font-size:14px}
+ .book-stage-content{min-width:0}
+ .book-progress-actions .btn{min-height:42px}
+}

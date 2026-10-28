@@ -1,14 +1,16 @@
 /* 하루영어 PWA - 앱 화면에 필요한 파일만 오프라인 보관합니다.
-   VOA 영상 및 외부 PDF는 캐시하지 않습니다. */
-const CACHE_NAME = "haru-english-shell-v20261029-fhd";
+   VOA 영상과 외부 PDF는 캐시하지 않습니다. 앱 내부 한국어 교재 데이터는 보관합니다. */
+const CACHE_NAME = "haru-english-shell-v20261029-kobook";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./data.js?v=20261029",
   "./practice-data.js?v=20261029",
   "./lesson-videos.js?v=20261029-fhd",
-  "./app.js?v=20261029-fhd",
-  "./styles.css?v=20261029-video",
+  "./study-book.js?v=20261029-kobook",
+  "./study-pages.js?v=20261029-kobook",
+  "./app.js?v=20261029-kobook",
+  "./styles.css?v=20261029-kobook",
   "./pwa.js?v=20261029-pwa",
   "./manifest.webmanifest",
   "./icons/icon.svg",
