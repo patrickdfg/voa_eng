@@ -210,3 +210,55 @@ h1,h2,h3,h4{letter-spacing:-.8px}
 @media(max-width:800px){.sidebar{display:none}.main{width:100%;padding:0 20px 110px}.topbar{height:80px}.mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:20;background:#fff;box-shadow:0 -4px 20px #756b851a;border-top:1px solid #eeeaf0;justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom))}.mobile-nav button{background:transparent;border:0;color:#9e96a5;display:grid;justify-items:center;gap:2px;min-width:54px}.mobile-nav button span{font:900 24px Nunito;line-height:1}.mobile-nav button small{font-size:9px;font-weight:800}.mobile-nav button.active{color:#6b54a1}.hero{min-height:205px}.hero-art{width:175px;height:160px}.art-blob{width:140px;height:140px}.art-book{font-size:72px}.art-person{font-size:64px;right:2px}.art-bubble{top:85px;font-size:11px}.columns{grid-template-columns:1fr 1fr}.stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stat{display:block;text-align:center}.stat-icon{margin:0 auto 11px}.study-overview{grid-template-columns:1fr 1fr}}
 @media(max-width:590px){.main{padding:0 17px 100px}.topbar{height:69px}.top-appname{font-size:9px}.today-badge{font-size:10px}.hero{padding:27px 23px 20px;min-height:295px;align-items:flex-start}.hero h1{font-size:25px}.hero p{font-size:11px;max-width:240px}.hero-art{position:absolute;right:2px;bottom:-7px;width:130px;height:130px;opacity:.9}.art-blob{width:130px;height:120px;left:5px;top:6px}.art-book{font-size:62px;bottom:11px;left:0}.art-person{font-size:54px;right:0}.art-bubble{top:86px;right:4px;padding:7px;font-size:10px}.hero-content{z-index:3}.hero-content .btn{margin-top:1px}.stats-grid{gap:8px}.stat{border-radius:15px;padding:13px 6px;min-height:98px}.stat-icon{height:34px;width:34px;border-radius:11px;font-size:19px;margin-bottom:11px}.stat small{font-size:9px;white-space:nowrap}.stat strong{font-size:20px}.stat strong span{font-size:9px}.columns,.record-grid{grid-template-columns:1fr}.lesson-feature{flex-wrap:nowrap;padding:16px;gap:15px}.feature-art{width:38%;min-width:114px;height:135px}.feature-emoji{font-size:52px}.feature-info h3{font-size:18px}.feature-info p{margin-bottom:13px;font-size:10px}.weekly-panel{padding:19px}.flow-grid{gap:8px}.flow-card{padding:17px 10px;min-height:155px;border-radius:15px}.flow-symbol{font-size:24px;margin:10px 0}.flow-card strong{font-size:12px}.flow-card small{font-size:9px;line-height:1.5}.arrow-tip{display:none}.section-heading h2{font-size:18px}.page-title{font-size:25px}.lesson-grid{gap:9px}.lesson-card{padding:14px;min-height:170px;border-radius:16px}.lesson-card h3{font-size:12px}.lesson-card p{font-size:10px}.lesson-card-icon{font-size:24px;margin:12px 0 9px}.lesson-filters{margin-top:18px}.search-input{max-width:none;width:100%}.study-overview{grid-template-columns:1fr}.study-cover{min-height:178px}.study-cover .cover-emoji{font-size:100px}.study-details{padding:22px}.study-section{padding:18px}.quiz-card{padding:18px}.quiz-choice-list{grid-template-columns:1fr}.quiz-option{padding:14px;min-height:48px}.resource-strip{align-items:flex-start;flex-direction:column;gap:11px}.record-summary,.calendar-panel{padding:18px}.calendar-days{gap:3px}.calendar-cell{min-height:37px}.review-row{align-items:flex-start;flex-direction:column}.top-actions{gap:9px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* VOA 52강 공식 PDF & 대화문 실전 연습 */
+.study-jump{display:flex;gap:9px;flex-wrap:wrap;margin:17px 0 4px}
+.study-jump a{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid #e9dff5;background:#fff;color:#725d9c;padding:9px 15px;font-size:12px;font-weight:800;transition:background .18s}
+.study-jump a:hover{background:#efe7fc}
+#pdfSection,#clozeSection,#scenarioSection,#quizMount{scroll-margin-top:24px}
+.pdf-callout{display:flex;align-items:center;gap:16px;background:#fbf8ff;border:1px solid #eee6f9;border-radius:17px;padding:16px}
+.pdf-cover-mark{display:grid;place-content:center;text-align:center;flex:none;width:63px;height:80px;border-radius:9px 17px 9px 9px;background:linear-gradient(145deg,#9077c9,#6954a8);color:#fff;box-shadow:0 9px 17px #7058a62b;font:900 17px Nunito}
+.pdf-cover-mark span{display:block;font-size:28px;line-height:1.2}
+.pdf-callout strong{font-size:15px;color:#493977}
+.pdf-callout p{color:#958ca2;margin:6px 0 0;font-size:12px;line-height:1.7}
+.pdf-mount{margin-top:15px;border:1px solid #e8dff2;border-radius:15px;overflow:hidden;background:#fff}
+.pdf-mount[hidden]{display:none!important}
+.pdf-mount iframe{width:100%;height:560px;display:block;border:0}
+.pdf-mount p{padding:0 14px 12px}
+.practice-section{border-color:#eae1f5}
+.exercise-question{background:linear-gradient(125deg,#f5efff,#fffaf2);border:1px solid #ece1f9;border-radius:17px;padding:19px 20px;margin-bottom:20px}
+.speaker-tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#e7dafb;color:#6b4b9a;font-size:11px;font-weight:900}
+.dialogue-line{font:900 clamp(19px,3vw,25px)/1.55 Nunito,"DM Sans","Noto Sans KR",sans-serif;letter-spacing:-.3px;color:#44335b;margin:13px 0 3px;overflow-wrap:anywhere}
+.exercise-question small{display:block;color:#9d90a9;font-size:12px;margin-top:9px}
+.exercise-blank{display:inline-block;padding:0 6px;color:#9c75bc;text-decoration:underline;text-underline-offset:5px}
+.practice-label{display:block;color:#6f6081;font-size:12px;font-weight:800;margin:12px 0 9px}
+.practice-input-row{display:flex;gap:9px;align-items:stretch}
+.practice-input{flex:1;min-width:0;padding:12px 15px;background:#fffefa;border:1px solid #e6ddef;border-radius:13px;font-size:14px}
+.practice-input-row>.btn{flex:none}
+.feedback.hint{background:#f4f0ff;color:#735f9c}
+#clozeFeedback .feedback,#sceneFeedback .feedback{margin-top:14px}
+.scenario-answer{min-height:97px;margin:0;line-height:1.7}
+.practice-credit{margin:15px 0 0;font-size:10px;color:#a398ac;line-height:1.7}
+.practice-credit a{text-decoration:underline;text-underline-offset:2px;color:#6b57ab;font-weight:800}
+.scenario-comparison{margin-top:17px;padding:18px;border-radius:16px;border:1px solid #dcd0f4;background:#faf6ff}
+.scenario-comparison .tiny-label{display:block;color:#806db1;margin:6px 0 5px}
+.scenario-comparison p{margin:0 0 14px;color:#493d62;font:800 16px/1.65 "DM Sans","Noto Sans KR",sans-serif;overflow-wrap:anywhere}
+.scenario-comparison small{font-size:11px;color:#9184a5;line-height:1.8}
+.inline-listen{display:inline-grid;vertical-align:middle;margin-left:5px;width:32px;height:32px;min-width:32px;font-size:13px}
+@media(max-width:590px){
+ .study-jump{gap:6px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}
+ .study-jump a{flex:none;padding:8px 12px;font-size:11px}
+ .pdf-callout{gap:11px;padding:13px}
+ .pdf-cover-mark{width:50px;height:66px;font-size:14px}
+ .pdf-cover-mark span{font-size:23px}
+ .pdf-callout strong{font-size:12px}
+ .pdf-callout p{font-size:10px}
+ .pdf-mount iframe{height:380px}
+ .exercise-question{padding:15px}
+ .dialogue-line{font-size:19px}
+ .practice-input-row{flex-wrap:wrap}
+ .practice-input-row .btn{min-height:44px}
+ .scenario-comparison{padding:14px}
+ .scenario-comparison .study-action-row .btn{flex:1;min-width:0;font-size:11px}
+}
