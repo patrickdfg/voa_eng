@@ -154,6 +154,34 @@
     try{r.start()}catch{toast("마이크를 다시 확인해 주세요.")}
   }
 
+
+  /* VOA 대화 원문을 영상 아래에 문장별로 바로 표시합니다. */
+  const videoSentenceSegmenter=typeof Intl.Segmenter==="function"
+    ?new Intl.Segmenter("en",{granularity:"sentence"}):null;
+  function videoTranscriptLines(id){
+    const rows=STUDY_BOOK[id-1]?.conversation||[];
+    return rows.flatMap(row=>{
+      const english=String(row.en||"").replace(/Let.s Learn English Lesson \d+\s+\d+/gi,"").replace(/\s+/g," ").trim();
+      if(!english)return [];
+      const sentences=videoSentenceSegmenter
+        ?Array.from(videoSentenceSegmenter.segment(english),part=>part.segment.trim()).filter(Boolean)
+        :[english];
+      return sentences.map((line,i)=>({speaker:i===0?row.speaker:"",text:line}));
+    });
+  }
+  function renderVideoTranscript(id){
+    const lines=videoTranscriptLines(id);
+    return `<div class="video-transcript" id="videoTranscript">
+      <div class="video-transcript-header"><div><span class="tiny-label">VOA ORIGINAL SCRIPT</span><h4>📄 영상 대화 원문 전체 <span>${lines.length}문장</span></h4>
+      <p>영어 원문만 표시합니다. 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 영어로 들을 수 있어요.</p></div></div>
+      <div class="video-script-list">${lines.map((row,i)=>`<div class="video-script-item" data-script-line="${i+1}">
+        <span class="video-script-number">${i+1}</span>
+        <div class="video-script-copy">${row.speaker?`<span class="video-script-speaker">${esc(row.speaker)}</span>`:""}<p lang="en">${esc(row.text)}</p></div>
+        <button class="video-script-listen" data-action="video-line-speak" data-text="${esc(row.text)}" aria-label="${i+1}번 영어 문장 듣기" type="button">🔊 <span>듣기</span></button>
+      </div>`).join("")}</div>
+    </div>`;
+  }
+
   function renderStudy(){
     const l=lesson(state.selected),p=practiceFor(l.id),last=l.id===52,prev=l.id===1,pdfUrl=`${COURSE_PDF}#page=${p.page}`;
     const media=LESSON_VIDEOS[l.id-1],videoUrl=videoQuality==="1080p"?media.fhd:videoQuality==="720p"?media.hd:media.sd;
@@ -172,6 +200,7 @@
           <p class="video-error" id="videoPlaybackIssue" role="status" hidden>영상 연결이 원활하지 않아요. 아래 '원본 영상' 버튼으로 열어 보세요.</p>
           <div class="lesson-video-tools"><label for="videoQuality">화질 <select id="videoQuality" aria-label="영상 화질"><option value="360p" ${videoQuality==="360p"?"selected":""}>기본 · 360p</option><option value="720p" ${videoQuality==="720p"?"selected":""}>고화질 · 720p</option><option value="1080p" ${videoQuality==="1080p"?"selected":""}>Full HD · 1080p</option></select></label><span>▶ 재생 버튼을 눌러 시작하세요 · 인터넷 연결 필요</span></div>
         </div>
+        ${renderVideoTranscript(l.id)}
         <div class="study-action-row"><button class="btn ${state.watched[l.id]?"btn-green":"btn-soft"}" data-action="watched" id="watchedButton">${state.watched[l.id]?"✓ 영상 시청 기록됨":"영상 봤어요 ✓"}</button><a href="${l.url}" class="btn btn-outline" target="_blank" rel="noopener noreferrer">원본 영상 ↗</a></div>
         <p class="muted-hint">출처: VOA Learning English · 영상은 공식 서버에서 직접 재생됩니다. 재생이 끝나면 시청 기록이 자동 저장됩니다.</p>
       </section>
@@ -327,6 +356,12 @@ ${notes||"(아직 메모가 없습니다. 이 강의 제목과 주제를 바탕�
     const btn=e.target.closest("[data-action]");if(!btn)return;
     const id=Number(btn.dataset.id),a=btn.dataset.action,l=lesson(state.selected);
     switch(a){
+      case"video-line-speak":{
+        const player=$("lessonVideo");if(player&&!player.paused)player.pause();
+        document.querySelectorAll(".video-script-item.is-speaking").forEach(el=>el.classList.remove("is-speaking"));
+        btn.closest(".video-script-item")?.classList.add("is-speaking");
+        speak(btn.dataset.text||"");break;
+      }
       case"book-speak":speak(btn.dataset.text||"");break;
       case"book-mic":listenBook();break;
       case"book-stage":{const desired=Number(btn.dataset.stage);if(desired>=1&&desired<=5){bookStage=desired;refreshBookStage()}break}

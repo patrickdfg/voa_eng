@@ -358,3 +358,35 @@ h1,h2,h3,h4{letter-spacing:-.8px}
  .book-stage-content{min-width:0}
  .book-progress-actions .btn{min-height:42px}
 }
+
+/* VOA 공식 대화문: 영상 바로 아래 영어 원문 전체와 문장별 듣기 */
+.video-transcript{margin:20px 0 19px;border:1px solid #e9e1f2;border-radius:17px;background:#fff;overflow:hidden}
+.video-transcript-header{padding:19px 20px 16px;background:linear-gradient(115deg,#f7f0ff,#fffaf3);border-bottom:1px solid #eae0f1}
+.video-transcript-header .tiny-label{display:block;color:#8166a9;font-size:10px;letter-spacing:1.1px;font-weight:900;margin-bottom:6px}
+.video-transcript-header h4{font-size:17px;line-height:1.4;color:#45365e;margin:0 0 6px;font-weight:900}
+.video-transcript-header h4 span{font-size:11px;color:#8f7daa;margin-left:5px;font-weight:800;white-space:nowrap}
+.video-transcript-header p{font-size:12px;line-height:1.8;color:#776e85;margin:0}
+.video-script-list{display:flex;flex-direction:column;padding:6px 13px}
+.video-script-item{display:grid;grid-template-columns:28px minmax(0,1fr) 67px;align-items:center;gap:10px;padding:11px 6px;border-bottom:1px solid #f1ebf5;transition:background .16s;border-radius:8px}
+.video-script-item:last-child{border-bottom:0}
+.video-script-item.is-speaking{background:#f1eafd;box-shadow:inset 3px 0 0 #7658b7}
+.video-script-number{font:900 11px Nunito;color:#ada0bb;text-align:center;align-self:center}
+.video-script-copy{min-width:0}
+.video-script-speaker{display:inline-block;padding:2px 7px;border-radius:6px;background:#f5effb;color:#7f60aa;font-size:10px;font-weight:900;line-height:1.5;margin-bottom:4px}
+.video-script-copy p{margin:0;font:800 14px/1.7 "DM Sans","Noto Sans KR",sans-serif;color:#40364c;overflow-wrap:anywhere;white-space:normal}
+.video-script-listen{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:39px;padding:7px 8px;border-radius:11px;border:1px solid #e4dbf1;background:#f2eaff;color:#634993;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap}
+.video-script-listen:hover{background:#e5d8f9}
+.video-script-listen:focus-visible{outline:3px solid #936dc6;outline-offset:2px}
+@media(max-width:590px){
+  .video-section .lesson-video-wrap{position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:15;box-shadow:0 10px 30px #21183140}
+  .video-transcript{margin-top:15px;border-radius:12px}
+  .video-transcript-header{padding:14px 13px}
+  .video-transcript-header h4{font-size:15px}
+  .video-transcript-header p{font-size:11px}
+  .video-script-list{padding:4px 7px}
+  .video-script-item{grid-template-columns:22px minmax(0,1fr) 42px;gap:6px;padding:10px 2px}
+  .video-script-number{font-size:10px}
+  .video-script-copy p{font-size:13px;line-height:1.64}
+  .video-script-listen{min-width:39px;min-height:40px;padding:7px;border-radius:9px;font-size:17px}
+  .video-script-listen span{display:none}
+}
